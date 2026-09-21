@@ -1,5 +1,7 @@
 #![no_std]
 
+extern crate alloc;
+
 use core::sync::atomic::{AtomicBool, Ordering};
 
 use semihosting::println;
@@ -15,6 +17,10 @@ pub const MMIO_BASE: usize = 0x3F00_0000;
 #[cfg(not(arm_architecture = "v7-a"))]
 pub const MMIO_BASE: usize = 0x2000_0000;
 
+/// Our heap
+#[global_allocator]
+static HEAP: embedded_alloc::LlffHeap = embedded_alloc::LlffHeap::empty();
+
 pub struct Board {
     pub mailbox: mailbox::Driver,
 }
@@ -23,6 +29,15 @@ pub fn init() -> Board {
     static HAS_INIT: AtomicBool = AtomicBool::new(false);
     if HAS_INIT.swap(true, Ordering::SeqCst) {
         panic!("Double init!");
+    }
+
+    semihosting::println!("{:?}", aarch32_cpu::register::Sctlr::read());
+
+    const HEAP_SIZE: usize = 1024 * 1024 * 32;
+    static mut HEAP_SPACE: [u8; HEAP_SIZE] = [0u8; HEAP_SIZE];
+
+    unsafe {
+        HEAP.init(&raw mut HEAP_SPACE as usize, HEAP_SIZE);
     }
 
     // Safety: Init only called once

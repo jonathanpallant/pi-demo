@@ -9,7 +9,12 @@ aarch32-rt = "0.5.0"
 arbitrary-int = "2.2.0"
 bitbybit = "2.0.1"
 derive-mmio = "0.8.0"
+embedded-alloc = "0.7.0"
+embedded-graphics = "0.8.2"
+embedded-graphics-core = "0.4.1"
+flate2 = { version = "1.1.10", default-features = false, features = ["rust_backend"] }
 semihosting = { version = "0.1.25", features = ["stdio"] }
+tinybmp = "0.7.0"
 
 [build-dependencies]
 arm-targets = "0.4.3"

@@ -1,6 +1,7 @@
 //! Talk to the video core
 
 use arbitrary_int::u28;
+use embedded_graphics::pixelcolor::IntoStorage;
 
 use crate::mailbox::{Channel, Driver as Mailbox, Message};
 
@@ -23,6 +24,33 @@ impl FrameBuffer32 {
             }
         } else {
             panic!("Off screen draw at {:?}", pos);
+        }
+    }
+}
+
+impl embedded_graphics_core::draw_target::DrawTarget for FrameBuffer32 {
+    type Color = embedded_graphics_core::pixelcolor::Rgb888;
+
+    type Error = core::convert::Infallible;
+
+    fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+    where
+        I: IntoIterator<Item = embedded_graphics_core::prelude::Pixel<Self::Color>>,
+    {
+        for pixel in pixels {
+            let point = pixel.0;
+            let rgb_bytes = pixel.1.into_storage();
+            self.set_pixel((point.x as u32, point.y as u32), rgb_bytes);
+        }
+        Ok(())
+    }
+}
+
+impl embedded_graphics_core::geometry::OriginDimensions for FrameBuffer32 {
+    fn size(&self) -> embedded_graphics_core::prelude::Size {
+        embedded_graphics_core::prelude::Size {
+            width: self.width,
+            height: self.height,
         }
     }
 }

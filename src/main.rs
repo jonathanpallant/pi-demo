@@ -2,10 +2,19 @@
 
 #![no_std]
 #![no_main]
+#![feature(alloc_io)]
+
+extern crate alloc;
+
+use alloc::io::Read;
 
 use aarch32_rt::entry;
-use pi_demo as _;
+use embedded_graphics::{Drawable, geometry::Point, image::Image};
 use semihosting::println;
+
+use pi_demo as _;
+
+static IMAGE_GZ: &'static [u8] = include_bytes!("test_card.bmp.gz");
 
 /// The entry-point to the Rust application.
 ///
@@ -44,14 +53,16 @@ fn my_main() -> ! {
     );
     println!("Screen phys {:?}", vc.get_phys_width_height());
 
-    let mut colour = 0;
-    loop {
-        for y in 0..1080 {
-            for x in 0..1920 {
-                fb.set_pixel((x, y), colour);
-                colour = colour.wrapping_add(1)
-            }
-        }
-        colour = colour.wrapping_add(1);
-    }
+    let mut decompressor = flate2::read::GzDecoder::new(IMAGE_GZ);
+    let mut image_buffer = alloc::vec::Vec::new();
+    let _length = decompressor
+        .read_to_end(&mut image_buffer)
+        .expect("upacking gzip");
+
+    let bmp = tinybmp::Bmp::from_slice(&image_buffer).expect("invalid bmp");
+    let image = Image::new(&bmp, Point::new(0, 0));
+
+    image.draw(&mut fb).expect("drawing");
+
+    loop {}
 }

@@ -1,8 +1,10 @@
 [target.armv6-none-eabi]
 runner = "qemu-system-arm -machine raspi1ap -semihosting -audio none -kernel"
+rustflags = ["--cfg", "flate2_unstable_nightly_alloc_io"]
 
 [target.armv7a-none-eabi]
 runner = "qemu-system-arm -machine raspi2b -semihosting -audio none -kernel"
+rustflags = ["--cfg", "flate2_unstable_nightly_alloc_io"]
 
 [build]
 target = "armv7a-none-eabi"
