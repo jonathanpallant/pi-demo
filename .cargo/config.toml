@@ -1,0 +1,8 @@
+[target.armv6-none-eabi]
+runner = "qemu-system-arm -machine raspi1ap -semihosting -audio none -kernel"
+
+[target.armv7a-none-eabi]
+runner = "qemu-system-arm -machine raspi2b -semihosting -audio none -kernel"
+
+[build]
+target = "armv7a-none-eabi"

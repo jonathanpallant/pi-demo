@@ -1,0 +1,15 @@
+[package]
+name = "pi-demo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+aarch32-cpu = { version = "0.4.0", features = ["critical-section-single-core"] }
+aarch32-rt = "0.5.0"
+arbitrary-int = "2.2.0"
+bitbybit = "2.0.1"
+derive-mmio = "0.8.0"
+semihosting = { version = "0.1.25", features = ["stdio"] }
+
+[build-dependencies]
+arm-targets = "0.4.3"
