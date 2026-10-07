@@ -29,7 +29,7 @@ impl FrameBuffer32 {
 }
 
 impl embedded_graphics_core::draw_target::DrawTarget for FrameBuffer32 {
-    type Color = embedded_graphics_core::pixelcolor::Rgb888;
+    type Color = embedded_graphics_core::pixelcolor::Bgr888;
 
     type Error = core::convert::Infallible;
 

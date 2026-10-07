@@ -1,4 +1,6 @@
-//! Semihosting hello-world.
+//! Slide-show program for bare-metal Raspberry Pi
+//!
+//! Tested in qemu-system-arm (might not work on real Raspberry Pi!)
 
 #![no_std]
 #![no_main]
@@ -14,7 +16,31 @@ use semihosting::println;
 
 use pi_demo as _;
 
-static IMAGE_GZ: &'static [u8] = include_bytes!("test_card.bmp.gz");
+static IMAGES: &[&[u8]] = &[
+    include_bytes!("../slides/slides.001.bmp.gz"),
+    include_bytes!("../slides/slides.002.bmp.gz"),
+    include_bytes!("../slides/slides.003.bmp.gz"),
+    include_bytes!("../slides/slides.004.bmp.gz"),
+    include_bytes!("../slides/slides.005.bmp.gz"),
+    include_bytes!("../slides/slides.006.bmp.gz"),
+    include_bytes!("../slides/slides.007.bmp.gz"),
+    include_bytes!("../slides/slides.008.bmp.gz"),
+    include_bytes!("../slides/slides.009.bmp.gz"),
+    include_bytes!("../slides/slides.010.bmp.gz"),
+    include_bytes!("../slides/slides.011.bmp.gz"),
+    include_bytes!("../slides/slides.012.bmp.gz"),
+    include_bytes!("../slides/slides.013.bmp.gz"),
+    include_bytes!("../slides/slides.014.bmp.gz"),
+    include_bytes!("../slides/slides.015.bmp.gz"),
+    include_bytes!("../slides/slides.016.bmp.gz"),
+    include_bytes!("../slides/slides.017.bmp.gz"),
+    include_bytes!("../slides/slides.018.bmp.gz"),
+    include_bytes!("../slides/slides.019.bmp.gz"),
+    include_bytes!("../slides/slides.020.bmp.gz"),
+    include_bytes!("../slides/slides.021.bmp.gz"),
+    include_bytes!("../slides/slides.022.bmp.gz"),
+    include_bytes!("../slides/slides.023.bmp.gz"),
+];
 
 /// The entry-point to the Rust application.
 ///
@@ -22,10 +48,6 @@ static IMAGE_GZ: &'static [u8] = include_bytes!("test_card.bmp.gz");
 #[entry]
 fn my_main() -> ! {
     let mut board = pi_demo::init();
-    let x = 1.0f64;
-    let y = x * 2.0;
-    println!("Hello, this is semihosting! x = {:0.3}, y = {:0.3}", x, y);
-
     let mut vc = pi_demo::videocore::Videocore::new(&mut board.mailbox);
 
     println!("Got videocore version 0x{:08x}", vc.get_firmware_version());
@@ -53,16 +75,39 @@ fn my_main() -> ! {
     );
     println!("Screen phys {:?}", vc.get_phys_width_height());
 
-    let mut decompressor = flate2::read::GzDecoder::new(IMAGE_GZ);
-    let mut image_buffer = alloc::vec::Vec::new();
-    let _length = decompressor
-        .read_to_end(&mut image_buffer)
-        .expect("upacking gzip");
+    let mut image_number = 0;
+    loop {
+        semihosting::println!("Drawing slide {}/{}", image_number + 1, IMAGES.len());
+        let image_contents = IMAGES[image_number];
+        let mut decompressor = flate2::read::GzDecoder::new(image_contents);
+        let mut image_buffer = alloc::vec::Vec::new();
+        let _length = decompressor
+            .read_to_end(&mut image_buffer)
+            .expect("upacking gzip");
 
-    let bmp = tinybmp::Bmp::from_slice(&image_buffer).expect("invalid bmp");
-    let image = Image::new(&bmp, Point::new(0, 0));
+        let bmp = tinybmp::Bmp::from_slice(&image_buffer).expect("invalid bmp");
+        let image = Image::new(&bmp, Point::new(0, 0));
 
-    image.draw(&mut fb).expect("drawing");
+        image.draw(&mut fb).expect("drawing");
 
-    loop {}
+        loop {
+            if let Ok(Some(ch)) = board.uart.read_word() {
+                semihosting::println!("Reading byte {}", ch as char);
+                match ch {
+                    b',' => {
+                        image_number = image_number.saturating_sub(1);
+                        break;
+                    }
+                    b'.' => {
+                        image_number = image_number.saturating_add(1);
+                        if image_number >= IMAGES.len() {
+                            image_number = IMAGES.len() - 1;
+                        }
+                        break;
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
 }

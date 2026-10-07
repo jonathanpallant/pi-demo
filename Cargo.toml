@@ -7,6 +7,7 @@ edition = "2024"
 aarch32-cpu = { version = "0.4.0", features = ["critical-section-single-core"] }
 aarch32-rt = "0.5.0"
 arbitrary-int = "2.2.0"
+arm-pl011-uart = "0.5.1"
 bitbybit = "2.0.1"
 derive-mmio = "0.8.0"
 embedded-alloc = "0.7.0"

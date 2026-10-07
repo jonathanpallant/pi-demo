@@ -1,11 +1,11 @@
 # Config for Raspberry Pi Zero and Raspberry Pi A/B/B+
 [target.armv6-none-eabihf]
-runner = "qemu-system-arm -machine raspi1ap -semihosting -audio none -kernel"
+runner = "qemu-system-arm -machine raspi1ap -semihosting -audio none -serial stdio -kernel"
 rustflags = ["--cfg", "flate2_unstable_nightly_alloc_io", "-Ctarget-cpu=arm1176jz-s"]
 
 # Config for Raspberry Pi 2 and Raspberry Pi 3 (in 32-bit mode)
 [target.armv7a-none-eabihf]
-runner = "qemu-system-arm -machine raspi2b -semihosting -audio none -kernel"
+runner = "qemu-system-arm -machine raspi2b -semihosting -audio none -serial stdio -kernel"
 rustflags = ["--cfg", "flate2_unstable_nightly_alloc_io", "-Ctarget-cpu=cortex-a7"]
 
 [build]
