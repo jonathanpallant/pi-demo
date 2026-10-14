@@ -44,6 +44,31 @@ impl embedded_graphics_core::draw_target::DrawTarget for FrameBuffer32 {
         }
         Ok(())
     }
+
+    // Provided methods
+    fn fill_contiguous<I>(
+        &mut self,
+        area: &embedded_graphics_core::primitives::Rectangle,
+        colors: I,
+    ) -> Result<(), Self::Error>
+    where
+        I: IntoIterator<Item = Self::Color>,
+    {
+        let mut color_iter = colors.into_iter();
+        for y in area.rows() {
+            let byte_offset = self.stride * (y as usize);
+            let row_ptr = unsafe { self.base_ptr.byte_add(byte_offset) };
+            for x in area.columns() {
+                let px_ptr = unsafe { row_ptr.offset(x as isize) };
+                let pixel = color_iter.next().map(|c| c.into_storage()).unwrap_or(0);
+                unsafe {
+                    px_ptr.write_volatile(pixel);
+                }
+            }
+        }
+
+        Ok(())
+    }
 }
 
 impl embedded_graphics_core::geometry::OriginDimensions for FrameBuffer32 {
