@@ -62,6 +62,14 @@ pub fn init() -> Board {
     Board { mailbox, uart }
 }
 
+/// Sleep Cores 1-3 rather than have them spin
+#[unsafe(no_mangle)]
+extern "C" fn _asm_secondary_core_park() {
+    loop {
+        aarch32_cpu::asm::wfe();
+    }
+}
+
 #[panic_handler]
 fn panic_handler(info: &core::panic::PanicInfo) -> ! {
     semihosting::println!("PANIC: {}", info);

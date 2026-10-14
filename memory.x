@@ -18,3 +18,4 @@ PROVIDE(_abt_stack_size = 64);
 PROVIDE(_irq_stack_size = 64);
 PROVIDE(_fiq_stack_size = 64);
 PROVIDE(_sys_stack_size = 256K);
+PROVIDE(_num_cores = 4);
