@@ -1,0 +1,2 @@
+The mailbox and framebuffer code is only 325 lines
+The VideoCore 4 does most of the work (and is 99% of the chip)

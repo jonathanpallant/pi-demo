@@ -1,0 +1,8 @@
+1990
+
+Apple needed a processor for the Newton Messagepad (which came out in 1993)
+
+Arm spinout - Acorn, VLSI and Apple
+
+ARM6 is ARMv3. 32-bit addressing.
+

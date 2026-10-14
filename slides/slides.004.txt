@@ -1,0 +1,7 @@
+slides.004.png
+
+Chip - a physical thing you can buy
+Processor - the element that executes instructions
+Instruction Set - the set of instructions the processor can execute
+Architecture - defines the instruction set, but also other operations like exception handling, reset behaviour, operating modes, etc
+

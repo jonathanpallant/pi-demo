@@ -1,0 +1,13 @@
+NXP S32Z2
+
+Visit to Bucharest in September 2024
+On-board programmer wasn't functional
+Used TRACE32 from Lauterbach
+Built a demo
+1. Make it boot
+2. Make it print hello
+3. Handle interrupts (reused one from Google / Arm)
+4. Get a timer running, with interrupts
+5. Repackage it into usable libraries.
+
+Was our EW demo in 2025

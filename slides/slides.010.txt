@@ -1,0 +1,5 @@
+2012
+
+64-bit Arm Architecture (AArch64)
+
+32-bit Arm Architecture now called AArch32

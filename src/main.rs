@@ -16,30 +16,95 @@ use semihosting::println;
 
 use pi_demo as _;
 
-static IMAGES: &[&[u8]] = &[
-    include_bytes!("../slides/slides.001.bmp.gz"),
-    include_bytes!("../slides/slides.002.bmp.gz"),
-    include_bytes!("../slides/slides.003.bmp.gz"),
-    include_bytes!("../slides/slides.004.bmp.gz"),
-    include_bytes!("../slides/slides.005.bmp.gz"),
-    include_bytes!("../slides/slides.006.bmp.gz"),
-    include_bytes!("../slides/slides.007.bmp.gz"),
-    include_bytes!("../slides/slides.008.bmp.gz"),
-    include_bytes!("../slides/slides.009.bmp.gz"),
-    include_bytes!("../slides/slides.010.bmp.gz"),
-    include_bytes!("../slides/slides.011.bmp.gz"),
-    include_bytes!("../slides/slides.012.bmp.gz"),
-    include_bytes!("../slides/slides.013.bmp.gz"),
-    include_bytes!("../slides/slides.014.bmp.gz"),
-    include_bytes!("../slides/slides.015.bmp.gz"),
-    include_bytes!("../slides/slides.016.bmp.gz"),
-    include_bytes!("../slides/slides.017.bmp.gz"),
-    include_bytes!("../slides/slides.018.bmp.gz"),
-    include_bytes!("../slides/slides.019.bmp.gz"),
-    include_bytes!("../slides/slides.020.bmp.gz"),
-    include_bytes!("../slides/slides.021.bmp.gz"),
-    include_bytes!("../slides/slides.022.bmp.gz"),
-    include_bytes!("../slides/slides.023.bmp.gz"),
+static IMAGES: &[(&[u8], &'static str)] = &[
+    (
+        include_bytes!("../slides/slides.001.bmp.gz"),
+        include_str!("../slides/slides.001.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.002.bmp.gz"),
+        include_str!("../slides/slides.002.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.003.bmp.gz"),
+        include_str!("../slides/slides.003.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.004.bmp.gz"),
+        include_str!("../slides/slides.004.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.005.bmp.gz"),
+        include_str!("../slides/slides.005.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.006.bmp.gz"),
+        include_str!("../slides/slides.006.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.007.bmp.gz"),
+        include_str!("../slides/slides.007.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.008.bmp.gz"),
+        include_str!("../slides/slides.008.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.009.bmp.gz"),
+        include_str!("../slides/slides.009.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.010.bmp.gz"),
+        include_str!("../slides/slides.010.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.011.bmp.gz"),
+        include_str!("../slides/slides.011.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.012.bmp.gz"),
+        include_str!("../slides/slides.012.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.013.bmp.gz"),
+        include_str!("../slides/slides.013.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.014.bmp.gz"),
+        include_str!("../slides/slides.014.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.015.bmp.gz"),
+        include_str!("../slides/slides.015.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.016.bmp.gz"),
+        include_str!("../slides/slides.016.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.017.bmp.gz"),
+        include_str!("../slides/slides.017.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.018.bmp.gz"),
+        include_str!("../slides/slides.018.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.019.bmp.gz"),
+        include_str!("../slides/slides.019.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.020.bmp.gz"),
+        include_str!("../slides/slides.020.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.021.bmp.gz"),
+        include_str!("../slides/slides.021.txt"),
+    ),
+    (
+        include_bytes!("../slides/slides.022.bmp.gz"),
+        include_str!("../slides/slides.022.txt"),
+    ),
 ];
 
 /// The entry-point to the Rust application.
@@ -77,9 +142,14 @@ fn my_main() -> ! {
 
     let mut image_number = 0;
     loop {
-        semihosting::println!("Drawing slide {}/{}", image_number + 1, IMAGES.len());
-        let image_contents = IMAGES[image_number];
-        let mut decompressor = flate2::read::GzDecoder::new(image_contents);
+        let slide = IMAGES[image_number];
+        semihosting::println!(
+            "Drawing slide {}/{}\n{}",
+            image_number + 1,
+            IMAGES.len(),
+            slide.1
+        );
+        let mut decompressor = flate2::read::GzDecoder::new(slide.0);
         let mut image_buffer = alloc::vec::Vec::new();
         let _length = decompressor
             .read_to_end(&mut image_buffer)

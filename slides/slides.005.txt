@@ -1,0 +1,7 @@
+The Acorn RISC Machine
+
+A co-processor for the BBC Micro
+
+Steve and Sophie. Pub.
+
+Low power for cheaper plastic package. PSU unplugged.

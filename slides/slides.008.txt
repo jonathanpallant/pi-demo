@@ -1,0 +1,8 @@
+1998 
+
+ARM7TDMI
+T is for Thumb
+Oldest LLVM supported ARM architecture and processor
+
+
+ARM7TDMI also found in the iPod and the Nintendo Game Boy Advance.

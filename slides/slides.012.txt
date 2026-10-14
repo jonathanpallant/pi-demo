@@ -1,0 +1,7 @@
+Application
+BSP
+HAL
+PAC
+Arch / RT
+then libcore below that
+compiler below that

@@ -1,0 +1,10 @@
+Rust Embedded Devices Working Group
+
+Started in 2017
+
+Key maintainers
+
+Lively matrix chat
+
+Should working groups be part of the project?
+

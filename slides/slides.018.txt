@@ -1,0 +1,16 @@
+Running tests on
+
+versatileab (ARM9, ARM11, Cortex-R5)
+MPS3-AN536 (dual Cortex-R52)
+zynq7000 (Cortex-A9)
+
+Testing C/Rust interop
+Soft-float/hard-float
+Interrupts and system calls
+Data and prefetch aborts
+Booting at EL1 and EL2
+SMP and atomics
+
+QEMU emulation is not perfect - it's instruction translation, not microarchitecture simulation
+
+Arm have the FVP, but that is not easy to set up in CI

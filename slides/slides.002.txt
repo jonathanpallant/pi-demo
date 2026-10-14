@@ -1,0 +1,6 @@
+Ferrous Systems
+
+Training
+Consulting
+Ferrocene - our distribution of the Rust toolchain, qualified for use at the highest safety standards but not only for that - it's designed to be used by everyone who wants Rust with long-term support. Open source, with a warranty.
+

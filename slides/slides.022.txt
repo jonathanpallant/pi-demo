@@ -1,0 +1,5 @@
+Hi EuroRust!
+
+I'm the pi-demo program running in QEMU :)
+
+Thanks for watching!

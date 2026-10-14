@@ -1,0 +1,7 @@
+The Acorn Archimedes
+
+8 MHz ARM2 (ARMv2). Later machines were ARM3 (still ARMv2).
+
+At 4 MIPS, an ARM2 is 2x speed of a 16 MHz 386 but at 0.5 clock speed.
+
+Only sold about 240,000 machines, but popular in UK Schools (as was Acorn's BBC Micro before it)

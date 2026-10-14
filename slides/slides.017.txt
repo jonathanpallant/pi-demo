@@ -1,0 +1,3 @@
+Main split here is ARMv4 (ARM7, ARM9, ARM11) vs ARM7 (Cortex-R, Cortex-A)
+Cannot enable cache until MMU programmed (for Cortex-A)
+Dual-core SMP is a nightmare

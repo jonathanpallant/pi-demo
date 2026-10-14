@@ -1,0 +1,3 @@
+aarch32-cpu (was cortex-ar)
+aarch32-rt (was cortex-a-rt and cortex-r-rt)
+arm-targets - wish for stable way to say "what Arm is this?"
