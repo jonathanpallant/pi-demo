@@ -155,10 +155,14 @@ fn my_main() -> ! {
             .read_to_end(&mut image_buffer)
             .expect("upacking gzip");
 
+        semihosting::println!("Loading BMP...");
         let bmp = tinybmp::Bmp::from_slice(&image_buffer).expect("invalid bmp");
+        semihosting::println!("Creating image...");
         let image = Image::new(&bmp, Point::new(0, 0));
 
+        semihosting::println!("Drawing image...");
         image.draw(&mut fb).expect("drawing");
+        semihosting::println!("Done...");
 
         loop {
             if let Ok(Some(ch)) = board.uart.read_word() {
