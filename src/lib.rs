@@ -9,6 +9,7 @@ use core::{
 
 use arm_pl011_uart::UniqueMmioPointer;
 
+pub mod interrupt;
 pub mod mailbox;
 pub mod videocore;
 

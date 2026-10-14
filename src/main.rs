@@ -8,9 +8,15 @@
 
 extern crate alloc;
 
+use core::{
+    ptr::NonNull,
+    sync::atomic::{AtomicUsize, Ordering::Relaxed},
+};
+
 use alloc::io::Read;
 
 use aarch32_rt::entry;
+use arm_pl011_uart::UniqueMmioPointer;
 use embedded_graphics::{Drawable, geometry::Point, image::Image};
 use semihosting::println;
 
@@ -107,6 +113,8 @@ static IMAGES: &[(&[u8], &'static str)] = &[
     ),
 ];
 
+static IMAGE_NUMBER: AtomicUsize = AtomicUsize::new(0);
+
 /// The entry-point to the Rust application.
 ///
 /// It is called by the start-up.
@@ -114,6 +122,14 @@ static IMAGES: &[(&[u8], &'static str)] = &[
 fn my_main() -> ! {
     let mut board = pi_demo::init();
     let mut vc = pi_demo::videocore::Videocore::new(&mut board.mailbox);
+    board
+        .uart
+        .set_interrupt_masks(arm_pl011_uart::Interrupts::RXI);
+    let mut interrupt = unsafe { pi_demo::interrupt::Driver::new() };
+    interrupt.enable_irq(pi_demo::interrupt::Interrupt::Uart);
+    unsafe {
+        aarch32_cpu::interrupt::enable();
+    }
 
     println!("Got videocore version 0x{:08x}", vc.get_firmware_version());
     println!("Got board model 0x{:08x}", vc.get_board_model());
@@ -140,8 +156,8 @@ fn my_main() -> ! {
     );
     println!("Screen phys {:?}", vc.get_phys_width_height());
 
-    let mut image_number = 0;
     loop {
+        let image_number = IMAGE_NUMBER.load(Relaxed);
         let slide = IMAGES[image_number];
         semihosting::println!(
             "Drawing slide {}/{}\n{}",
@@ -164,24 +180,32 @@ fn my_main() -> ! {
         image.draw(&mut fb).expect("drawing");
         semihosting::println!("Done...");
 
-        loop {
-            if let Ok(Some(ch)) = board.uart.read_word() {
-                semihosting::println!("Reading byte {}", ch as char);
-                match ch {
-                    b',' => {
-                        image_number = image_number.saturating_sub(1);
-                        break;
-                    }
-                    b'.' => {
-                        image_number = image_number.saturating_add(1);
-                        if image_number >= IMAGES.len() {
-                            image_number = IMAGES.len() - 1;
-                        }
-                        break;
-                    }
-                    _ => {}
-                }
+        aarch32_cpu::asm::wfi();
+    }
+}
+
+#[aarch32_rt::exception(Irq)]
+fn interrupt_handler() {
+    semihosting::println!("IRQ!");
+    let uart_regs =
+        unsafe { UniqueMmioPointer::new(NonNull::new(pi_demo::UART_ADDRESS as *mut _).unwrap()) };
+    let mut uart = arm_pl011_uart::Uart::new(uart_regs);
+    let mut image_number = IMAGE_NUMBER.load(Relaxed);
+    if let Ok(Some(ch)) = uart.read_word() {
+        semihosting::println!("Reading byte {}", ch as char);
+        match ch {
+            b',' => {
+                image_number = image_number.saturating_sub(1);
+                IMAGE_NUMBER.store(image_number, Relaxed);
             }
+            b'.' => {
+                image_number = image_number.saturating_add(1);
+                if image_number >= IMAGES.len() {
+                    image_number = IMAGES.len() - 1;
+                }
+                IMAGE_NUMBER.store(image_number, Relaxed);
+            }
+            _ => {}
         }
     }
 }
